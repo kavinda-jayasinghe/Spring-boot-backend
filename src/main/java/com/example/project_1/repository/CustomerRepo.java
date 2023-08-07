@@ -27,10 +27,12 @@ public interface CustomerRepo extends JpaRepository<Customer,Integer>
     @Query(value = "update customer set customer_name=?1,nic=?2 where customer_id=?3",nativeQuery = true)
     void updateCustomerByQuery(String customerName,String nic,int id);
 
+    Optional<Customer> findByNicEquals(String nic);
+
  /*   @Query(value = "select * from  customer where nic=?1",nativeQuery = true)
     Customer getCustomerByNicQuery(String nic);
 */
-    Customer findByNicEquals(String nic);
+
 
 
 }

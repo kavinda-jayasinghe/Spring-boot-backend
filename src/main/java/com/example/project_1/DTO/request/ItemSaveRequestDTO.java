@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
- @Data
+@Data
 public class ItemSaveRequestDTO {
 
     private String itemName;

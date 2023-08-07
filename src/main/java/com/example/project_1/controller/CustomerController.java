@@ -100,7 +100,6 @@ public class CustomerController {
         return customerSalaryAddressIdDTO;
     }
 
-
     @PutMapping(path={"/update-By-filter/{id}"})
 
     public String updateCustomerByFilter(

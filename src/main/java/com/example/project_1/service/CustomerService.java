@@ -7,7 +7,7 @@ import com.example.project_1.DTO.request.UpdateByNameSalaryIdDTO;
 import com.example.project_1.DTO.request.UpdateCustomerByQueryDTO;
 import com.example.project_1.DTO.response.CustomerNameByActiveState;
 import com.example.project_1.DTO.response.CustomerSalaryAddressIdDTO;
-import javassist.NotFoundException;
+import com.example.project_1.exception.NotFoundException;
 
 import java.util.List;
 

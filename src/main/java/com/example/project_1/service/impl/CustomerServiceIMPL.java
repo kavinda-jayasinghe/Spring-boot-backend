@@ -9,13 +9,15 @@ import com.example.project_1.DTO.response.CustomerNameByActiveState;
 import com.example.project_1.DTO.response.CustomerSalaryAddressIdDTO;
 import com.example.project_1.entity.Customer;
 import com.example.project_1.exception.EntryDuplicationException;
+import com.example.project_1.exception.NotFoundException;
 import com.example.project_1.repository.CustomerRepo;
 import com.example.project_1.service.CustomerService;
 import com.example.project_1.util.mappers.CustomerMapper;
-import javassist.NotFoundException;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import springfox.documentation.swagger2.mappers.ModelMapper;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,14 +137,15 @@ return null;
     public boolean customerDelete(int id) throws NotFoundException {
         if(customerRepo.existsById(id)){
             customerRepo.deleteById(id);
-
+            return true;
         }else{
            throw new NotFoundException("not found customer for this id");
         }
 
-        return true;
+
     }
 
+//==================================================getByName
 
     @Override
     public List<CustomerDTO> getByName(String customerName) throws NotFoundException {
@@ -151,18 +154,22 @@ return null;
         if(customers.size()!=0){
 
             List<CustomerDTO> customerDTO=customerMapper.entityListToDtoList(customers);
+
             return customerDTO;
         }else{
             throw new NotFoundException("No results");
         }
-
     }
+
+
+
+
    @Override
     public List<CustomerDTO> getAllCustomersByActiveState() throws NotFoundException {
        List<Customer> customers = customerRepo.findAllByActiveStateEquals(true);
        if (customers.size() != 0) {
 
-           List<CustomerDTO> customerDTOS = customerMapper.entityListToDtoList(customers);
+           List<CustomerDTO> customerDTOS = customerMapper.entityListToDtoList(customers); 
            return customerDTOS;
        } else {
            throw new NotFoundException("No active customer found..");
@@ -195,34 +202,29 @@ return null;
 
     @Override
     public CustomerDTO getCustomerByNic(String nic) {
-        Customer customer=customerRepo.findByNicEquals(nic);
-        if (customer!=null){
-            CustomerDTO customerDTO=customerMapper.entityToDto(customer);
+        Optional<Customer> customer=customerRepo.findByNicEquals(nic);
+        if (customer.isPresent()){
+            CustomerDTO customerDTO=modelMapper.map(customer.get(),CustomerDTO.class);
             return customerDTO;
 
         }else {
 throw new com.example.project_1.exception.NotFoundException("Not found ");
         }
-
-
     }
-
     @Override
     public CustomerSalaryAddressIdDTO customerGetByIdFilter(int id) {
-        Optional<Customer> customer=customerRepo.findById(id);
-        if(customer.isPresent()){
-            CustomerSalaryAddressIdDTO customerSalaryAddressIdDTO=customerMapper.SalaryAddressIdEntityToDTO(customer.get());
+
+        Customer customer=customerRepo.getById(id);
+        if(customerRepo.existsById(id)){
+            CustomerSalaryAddressIdDTO customerSalaryAddressIdDTO=customerMapper.SalaryAddressIdEntityToDTO(customer);
             return customerSalaryAddressIdDTO;
         }
         return null;
     }
-
     @Override
     public String updateByFilter(UpdateByNameSalaryIdDTO updateByNameSalaryIdDTO, int id) {
         if(customerRepo.existsById(id)){
            Customer customer=customerRepo.getById(id);
-
-
             customer.setCustomerName(updateByNameSalaryIdDTO.getCustomerName());
             customer.setCustomerSalary(updateByNameSalaryIdDTO.getCustomerSalary());
             customer.setNic(updateByNameSalaryIdDTO.getNic());
